@@ -1,0 +1,37 @@
+* {
+    margin: 0;
+    padding: 0;
+    background-color: #17212b;
+    color: white;
+    font-family: 'Segoe UI';
+    font-size: 20px;
+}
+
+#formcreate {
+    width: auto;
+    height: 400px;
+    color: #6d7883;
+    margin-top: 20px;
+}
+#formcreate form {
+    margin-top: 10px;
+}
+#formcreate form label {
+    display: block;
+}
+#formcreate form input{
+    background-color: #343f4b;
+    margin: 5px 0 25px 15px;
+    display: inline-block;
+}
+#about {
+    height: 200px;
+    width: 300px;
+}
+#to_submit {
+    margin-top: 10px;
+    display: block;
+}
+/* .name {
+    margin-left: 10px;
+} */

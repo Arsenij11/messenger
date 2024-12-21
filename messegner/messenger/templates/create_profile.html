@@ -1,0 +1,70 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/create_profile.css' %}
+{% endblock %}
+{% block content %}
+<div id="formcreate">
+    <form action="" enctype="multipart/form-data" method="POST" id="create" onsubmit="return create_new_account(event);">
+        {% csrf_token %}
+        <label>Username:</label>
+        <input id="user" value="{{user}}" type="text" readonly>
+        <label>Имя:</label>
+        <input id="name" class="name" type="text" placeholder="Введите своё имя">
+        <label>О себе:</label>
+        <input id="about" type="text" placeholder="Напишите о себе">
+        <label>Пол:</label>
+        <input id="sex_female" type="checkbox" value="Female"> Женский
+        <input id="sex_male" type="checkbox" value="Male"> Мужской
+        <label>Прикрепите фото профиля:</label>
+        <input id="profile_picture" type="file">
+        <input id="to_submit" type="submit" value="Отправить">
+    </form>
+</div>
+<div id="error"></div>
+<script>
+    function create_new_account(event) {
+        event.preventDefault(); // Останавливаем стандартное поведение формы
+        let form = event.target;
+        let user = form.user.value;
+        let name = form.name.value;
+        let about = form.about.value;
+        let sex = form.sex_female.checked ? 'Female' : form.sex_male.checked ? 'Male' : 'Не указан';
+        let photo = form.profile_picture.files[0];
+        alert(`Username: ${user}\nName: ${name}\nAbout: ${about}\nSex: ${sex}\nPhoto: ${photo}`);
+       
+        let data = {
+                    "name": name,
+                    "profile_picture": form.profile_picture.files[0],
+                    "about": about,
+                    "online": false,
+                    "sex": sex,
+                    "user": user
+                }
+        let success = true; 
+        let socket = new WebSocket('wss://127.0.0.1:8000/api/users/create');
+        let new_user;
+        socket.onopen = function(e){
+            socket.send(JSON.stringify(data));
+        };
+        socket.onmessage = function(e) {
+            new_user = e.data;
+        }
+        socket.onerror = function(evt) {
+           let error = document.getElementById('error');
+           error.textContent = evt.data;
+           success = false;
+        };
+        socket.onclose = function(evt) {
+            if (success) {
+                window.location.href=`http://127.0.0.1:8000/main_page/${new_user.id}`
+            }
+        }
+        return false; // Останавливаем отправку формы
+    }
+</script>
+
+{% endblock %}

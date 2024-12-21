@@ -1,0 +1,29 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/main_style.css' %}
+{% endblock %}
+{% block content %}
+<div id="info">
+    <div id="photo"><img src="{{account.profile_picture.url}}" id="profilepicture"></div>
+    <p id="name">{{account.name}}</p>
+    <p id="status">{% if account.online %}В сети{% else %}Не в сети{% endif %}</p>
+    <p id="about">О себе</p>
+    <p id="description">{{account.about}}</p>
+    {% if user == account.user %}<p id='editprofile'>Редактировать...</p>{% endif %}
+</div>
+<!-- <script>
+    setInterval(() => {
+        const status = document.getElementById('status');
+        if (status.textContent === 'В сети') {
+            status.style.color = '#51b3d5';
+        }
+        else {
+            status.style.color = '#6d7883';
+        }
+    }, 10000); 
+</script> -->
+{% endblock %}
