@@ -1,0 +1,61 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/chat.css' %}
+{% endblock %}
+{% block content %}
+<p style="display : none" id="user">{{user.id}}</p>
+<p style="display : none" id="chat">{{ourchat.id}}</p>
+<p style="display : none" id="token">{{token}}</p>
+    <div id="chats">
+        {% for chat in chats %}
+        {% if chat.is_private is None %}
+
+            <a class="chat" href="{% url 'chat' chat.id %}">
+                <img src="{{chat.chat_photo.url}}">
+                <div class="mesandname">
+                    <span class = "chat_name">{{chat.name}}</span>
+                    {% for mes in chat.message.all %}
+                        {% if forloop.last %}
+                            <br>
+                            <span class = "preview">{{mes.user}} : {{mes.preview}}</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </a>
+        {% else %}
+            <a class="chat" href="{% url 'chat' chat.id %}">
+                <img src="{{chat.is_private.second_user.profile_picture.url}}">
+                <div class="mesandname">
+                <span class = "chat_name">{{chat.is_private.second_user.name}}</span>
+                {% for mes in chat.is_private.second_user.message.all %}
+                    {% if forloop.last %}
+                        {% if mes is not None %}<span class = "preview">{{mes.preview}}</span>{% endif %}
+                    {% endif %}
+                {% endfor %}
+                </div>
+            </a>
+        {% endif %}
+    {% endfor %}
+    </div>
+<div id="messages">
+    {% for mes in ourchat.message.all %}
+<!--    <img src="{{mes.user.profile_picture.url}}" class="profile_picture">-->
+    <div class="message">
+        <span class="name">{{mes.user}}</span><br>
+        <span class="mes">{{mes.message}}</span><br><br>
+    </div>
+    {% endfor %}
+</div>
+<div id="tosendmessage">
+    <div id="tosendmessagerow">
+        <input type="text" id="putmessage" placeholder="Введите сообщение...">
+        <button type="button" id="sendmessage">send</button>
+    </div>
+</div>
+<script src="{% static 'js/chat.js' %}"></script>
+
+{% endblock %}

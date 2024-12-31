@@ -1,0 +1,22 @@
+* {
+    margin: 0;
+    padding: 0;
+    background-color: #0e1621;
+    color: white;
+}
+#form {
+    width: 350px;
+    height: 300px;
+    border: 1px solid white;
+    font-size: 26px;
+    text-align: center;
+}
+#form p {
+    margin-top: 10px;
+}
+#form button {
+    margin-top: 10px;
+    width: 60px;
+    height: 40px;
+    border-radius: 30px;
+}

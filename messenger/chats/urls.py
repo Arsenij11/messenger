@@ -6,8 +6,5 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.ChatAPIView.as_view()),
-    path('api/chat/update/<int:pk>', views.ChatUpdateAPIView.as_view()),
-    path('api/chat/delete/<int:pk>', views.ChatDeleteAPIView.as_view()),
-
+    path('new_message', views.NewMessageAPIView.as_view() ,name='new message'),
 ]

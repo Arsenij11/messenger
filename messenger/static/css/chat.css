@@ -1,0 +1,91 @@
+* {
+    margin: 0;
+    padding: 0;
+    background-color: #17212b;
+    color: white;
+    font-family: 'Segoe UI';
+}
+#chats {
+    width: 300px;
+}
+.chat { 
+    height: 100px;
+    /* margin-top: 10px; */
+    display: block; 
+}
+.chat img {
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
+    float: left;
+   
+}
+.mesandname {
+    position: absolute;
+    left: 90px;
+}
+
+.chat_name {
+    font-size: 16px;
+
+}
+.preview {
+    color: #afafaf;
+}
+#messages {
+    background-color: #0e1621;
+    display: inline-block;
+    text-align: center;
+    position: absolute;
+    left: 300px;
+    top: 30px;
+    bottom: 0;
+}
+.profile_picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    float: left;
+    margin-left: 0;
+}
+.message {
+    height: 45px;
+    width: 175px;
+    background-color: #182533;
+    position: absolute;
+    left: 0;
+    text-align: left;
+    margin-left: 5px;
+    border-radius: 5px;
+} 
+
+.name {
+    color: #5faee7;
+    /* display: inline-block; */
+}
+#tosendmessage {
+    display: table;
+}
+#tosendmessage div {
+    display: table-row;
+}
+#tosendmessage div input {
+    background-color: #182533;
+    height: 30px;
+    margin-top: 10px;
+    border: 1px solid white;
+    display: table-cell;
+}
+#tosendmessage div button {
+    width: 50px;
+    height: 30px;
+    border-radius: 15px; 
+    text-align: center;
+    display: none;
+}
+/* .mes {
+    display: inline-block;
+}
+.time {
+    display: inline-block;
+} */

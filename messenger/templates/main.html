@@ -13,7 +13,7 @@
     <p id="status">{% if account.online %}В сети{% else %}Не в сети{% endif %}</p>
     <p id="about">О себе</p>
     <p id="description">{{account.about}}</p>
-    {% if user == account.user %}<p id='editprofile'>Редактировать...</p>{% endif %}
+    <p id='editprofile'><a href="{% url 'update_profile' account.username %}">Редактировать...</a></p>
 </div>
 <!-- <script>
     setInterval(() => {

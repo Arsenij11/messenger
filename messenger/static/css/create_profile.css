@@ -16,19 +16,19 @@
 #formcreate form {
     margin-top: 10px;
 }
-#formcreate form label {
+#formcreate form p label {
     display: block;
 }
-#formcreate form input{
+#formcreate form p input{
     background-color: #343f4b;
-    margin: 5px 0 25px 15px;
+    margin: 5px 0 25px 0;
     display: inline-block;
 }
 #about {
     height: 200px;
     width: 300px;
 }
-#to_submit {
+button {
     margin-top: 10px;
     display: block;
 }

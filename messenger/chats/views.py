@@ -1,33 +1,18 @@
 from django.shortcuts import render
 from rest_framework import generics, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from chats.models import Chat
+from chats.models import Chat, Message
 from chats.permissions import IsOwnerOrReadOnly
-from chats.serializers import ChatSerializer
+from chats.serializers import ChatSerializer, MessageSerializer
 
 
 # Create your views here.
 
 
+class NewMessageAPIView(generics.CreateAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = (AllowAny,)
 
 
-class ChatAPIView(generics.ListAPIView):
-    queryset = Chat.objects.all()
-    serializer_class = ChatSerializer
-    # permission_classes = (IsAuthenticated, )
-
-class ChatCreateAPIView(generics.CreateAPIView):
-    queryset = Chat.objects.all()
-    serializer_class = ChatSerializer
-    # permission_classes = (IsAuthenticated, )
-
-class ChatDeleteAPIView(generics.DestroyAPIView):
-    queryset = Chat.objects.all()
-    serializer_class = ChatSerializer
-    # permission_classes = (IsOwnerOrReadOnly,)
-
-class ChatUpdateAPIView(generics.UpdateAPIView):
-    queryset = Chat.objects.all()
-    serializer_class = ChatSerializer
-    # permission_classes = (IsOwnerOrReadOnly,)

@@ -1,0 +1,53 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/authorization.css' %}
+{% endblock %}
+{% block content %}
+<div id="form">
+  <h1>Авторизация</h1>
+
+  <form method="POST" action="">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Войти</button>
+  </form>
+
+<p><a href="{% url 'registration:password_reset_form' %}">Забыли пароль?</a></p>
+<p>Ещё не <a href="{% url 'registration:registration' %}">зарегистрировались</a>?</p>
+</div>
+<script>
+  let form = document.getElementById('form');
+  let height = window.innerHeight;
+  let width = window.innerWidth;
+  let button = document.querySelector('button');
+  let refs = document.querySelectorAll('a');
+
+  form.style.marginTop = Math.floor(height/3.5) + 'px';
+  form.style.marginLeft = Math.floor(width/2.5) + 'px';
+  button.addEventListener('mouseover', (event)=>{
+    let el = event.target;
+    el.style = 'cursor: pointer; background-color: #808080'
+  });
+  button.addEventListener('mouseout', (event)=> {
+    let el = event.target;
+    el.style = 'cursor: pointer; background-color: #0e1621';
+  });
+
+  for (let r of refs){
+    r.addEventListener('mouseover', (event)=>{
+      let el = event.target;
+      el.style = 'color: #808080'
+    });
+
+    r.addEventListener('mouseout', (event)=>{
+      let el = event.target;
+      el.style = 'cursor: none; color: white'
+    });
+  }
+
+</script>
+{% endblock %}
