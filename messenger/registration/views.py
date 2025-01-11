@@ -29,7 +29,7 @@ class LoginUser(LoginView):
 
     def form_valid(self, form):
         f = form.cleaned_data
-        self.password = int(f['password'])
+        self.password = f['password']
         if EmailConfirm.objects.filter(user__username=f['username']).exists():
             return redirect(reverse('registration:confirm_email', kwargs={'user_id': get_user_model().objects.get(username=f['username']).pk}))
         return super().form_valid(form)
@@ -41,7 +41,7 @@ class LoginUser(LoginView):
                                                                         'password' : self.password,
                                                                         }
                       )
-        return reverse_lazy('main page', kwargs={'username' : self.request.user.username})
+        return reverse_lazy('create_profile')
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:

@@ -13,10 +13,10 @@ nonselectedchat.style.top = `${Number(window.innerHeight/2)}px`;
 if (everychat.length > 0){
 everychat.forEach((e)=>{
     e.addEventListener('mouseover', (event)=> {
-        event.target.style = 'cursor : pointer; background-color: #202b36';
+        event.target.style = 'cursor : pointer';
     });
     e.addEventListener('mouseout', (event) => {
-        event.target.style = 'cursor : none; background-color: #17212b';
+        event.target.style = 'cursor : none';
     });
 })
 };

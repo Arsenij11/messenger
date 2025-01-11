@@ -1,0 +1,59 @@
+* {
+    margin: 0;
+    padding: 0;
+    background-color: #17212b;
+    color: white;
+    font-family: "Ledger", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+#info {
+    width: 400px;
+    height: auto;
+    font-size: 25px;
+    border: 1px solid white;
+    /* border: 1px solid white; */
+}
+#chat_photo img {
+    width: 150px;
+    height: 150px;
+    border-radius: 75px;
+    margin-right: 5px;
+    float: left;
+}
+#about {
+    clear: both;
+    font-size: 16px;
+}
+#time {
+    color: grey;
+    font-size: 14px;
+}
+#name {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+#tochat a {
+    color: rgb(47, 47, 250);
+    font-size: 15px;
+    font-style: italic;
+}
+#notexists p{
+    text-align: center;
+}
+#show a {
+    font-size: 13px;
+    text-align: left;
+}
+#delete_chat a {
+    color: red;
+    font-size: 15px;
+    font-style: italic;
+    margin-top: 15px;
+}
+#update_chat a {
+    font-size: 15px;
+    font-style: italic;
+    margin-top: 15px;
+}

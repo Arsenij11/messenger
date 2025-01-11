@@ -24,7 +24,7 @@ from messenger.settings import DEBUG
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),
-    path('api/chat/', include('chats.urls')),
+    path('api/chat/', include('API.urls')),
     path('users/', include('registration.urls', namespace='registration')),
     path('api/v1/auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),

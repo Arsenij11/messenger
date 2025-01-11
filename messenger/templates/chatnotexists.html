@@ -1,0 +1,35 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/moreinfo.css' %}
+{% endblock %}
+{% block content %}
+<p id="username" style="display: none;">{{user.username}}</p>
+<div id="notexists">
+    <p>Данного чата не существует.</p>
+    <p id="tomain">Вы будете перенаправлены на главную страницу через </p>
+</div>
+<script>
+    const div = document.getElementById('notexists');
+    const tomain = document.getElementById('tomain');
+    const username = document.getElementById('username').innerHTML;
+    div.style.margin = `${Math.floor(window.innerHeight/2.3)}px 0 0 0`;
+
+    let text = tomain.innerHTML;
+    let num = 10;
+    tomain.innerHTML = text + num;
+
+    setInterval(()=> {
+        if (num === 0) {
+            window.location.href = `http://127.0.0.1:8000/main_page/${username}`
+        }
+        else {
+            num--;
+            tomain.innerHTML = text + num;
+        }
+    }, 1000);
+</script>
+{% endblock %}

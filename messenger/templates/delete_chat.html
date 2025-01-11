@@ -1,0 +1,31 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/new_chat.css' %}
+{% endblock %}
+{% block content %}
+ <div id="form">
+     <h1 style="text-align : center">Вы действительно хотите удалить чат {{chat.name}}?</h1>
+    <form method="POST" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit">Удалить</button>
+    </form>
+</div>
+<script>
+    const form = document.getElementById('form');
+    form.style.margin = `${Math.floor(window.innerHeight/3.5)}px 0 0 ${Math.floor(window.innerWidth/2.5)}px`
+
+    const button = document.querySelector('button');
+    button.addEventListener('mouseover', (event) => {
+        event.target.style = 'cursor : pointer; background-color : grey';
+    });
+    button.addEventListener('mouseout', (event) => {
+        event.target.style = 'cursor : none; background-color : #17212b';
+    });
+
+</script>
+{% endblock %}

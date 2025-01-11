@@ -25,22 +25,33 @@
                 </div>
             </a>
         {% else %}
-            <a class="chat" href="{% url 'chat' chat.id %}">
-                <img src="{{chat.is_private.second_user.profile_picture.url}}">
-                <div class="mesandname">
-                <span class = "chat_name">{{chat.is_private.second_user.name}}</span>
-                {% for mes in chat.is_private.second_user.message.all %}
+            <a class="pchat" href="{% url 'chat' chat.id %}">
+                {% if user.account.id == chat.admin.id %}
+                        <img src="{{chat.is_private.second_user.profile_picture.url}}">
+
+                        <div class="mesandname">
+                        <span class = "chat_name">{{chat.is_private.second_user.name}}</span>
+                            {% else %}
+                        <img src="{{chat.admin.profile_picture.url}}">
+
+                    <div class="mesandname">
+                    <span class = "chat_name">{{chat.admin.name}}</span>
+                {% endif %}
+                {% for mes in chat.message.all %}
                     {% if forloop.last %}
-                        {% if mes is not None %}<span class = "preview">{{mes.preview}}</span>{% endif %}
+                        <br>
+                        <span class = "preview">{{mes.user.name}} : {{mes.preview}}</span>
                     {% endif %}
                 {% endfor %}
+
+
                 </div>
             </a>
         {% endif %}
     {% endfor %}
-    </div>
+</div>
 
 <p id="messages"><span id="nonselectedchat">Здесь будут отображаться ваши диалоги</span></p>
-    <script src="{% static 'js/chats.js' %}"></script>
+<script src="{% static 'js/chats.js' %}"></script>
 
 {% endblock %}

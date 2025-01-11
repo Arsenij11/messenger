@@ -1,0 +1,23 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/create_profile.css' %}
+{% endblock %}
+{% block content %}
+<div id="formcreate">
+    <h1 style="text-align : center">Вы уверены, что хотите удалить аккаунт {{account.name}}?</h1>
+    <form action="" enctype="multipart/form-data" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit" id="delete">Удалить</button>
+    </form>
+</div>
+<script>
+    const button = document.getElementById('delete');
+    button.style.margin = `55px 0 0 ${window.innerWidth / 2.2}px`
+
+</script>
+{% endblock %}

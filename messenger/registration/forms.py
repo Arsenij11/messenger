@@ -54,9 +54,9 @@ class RegistrationForm(UserCreationForm):
         user_key = random.choice(list_of_codes)
 
         send_mail(
-            subject='Добро пожаловать на наш сайт!',
+            subject='Добро пожаловать в наш мессенджер!',
             message=f'Здравствуйте!\nЧтобы закончить регистрацию, введите этот код {user_key}!'
-                    f'\n\nС уважением,\nКоманда Bulletin Board\n\n\nP.s. : Если Вы не указывали данный e-mail, '
+                    f'\n\nС уважением,\nКоманда The Best Messenger\n\n\nP.s. : Если Вы не указывали данный e-mail, '
                     f'проигнорируйте сообщение',
             from_email=None,  # будет использовано значение DEFAULT_FROM_EMAIL
             recipient_list=[user.email],

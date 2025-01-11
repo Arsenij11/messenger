@@ -1,0 +1,16 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/invalidinvite.css' %}
+{% endblock %}
+{% block content %}
+    <div id="info">
+        <p>Вы ещё не создали ни одну беседу</p>
+        <p id="time">Вы будете перенаправлены на главную страницу через </p>
+        <p id="username" style="display : none">{{user.username}}</p>
+    </div>
+    <script src="{% static 'js/invalid.js' %}"></script>
+{% endblock %}

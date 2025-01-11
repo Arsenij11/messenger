@@ -1,8 +1,11 @@
 * {
     margin: 0;
     padding: 0;
-    background-color: #0e1621;
+    background-color: #17212b;
     color: white;
+     font-family: "Ledger", serif;
+  font-weight: 400;
+  font-style: normal;
 }
 #form {
     width: 350px;

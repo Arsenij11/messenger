@@ -7,10 +7,13 @@
 {% static 'css/chat.css' %}
 {% endblock %}
 {% block content %}
-<p style="display : none" id="user">{{user.id}}</p>
+<p style="display : none" id="user">{{user.account.id}}</p>
+<p style="display : none" id="username">{{user.account.name}}</p>
 <p style="display : none" id="chat">{{ourchat.id}}</p>
+<p style="display : none" id="user_photo">{{user.account.profile_picture.url}}</p>
 <p style="display : none" id="token">{{token}}</p>
-    <div id="chats">
+
+<div id="chats">
         {% for chat in chats %}
         {% if chat.is_private is None %}
 
@@ -27,35 +30,84 @@
                 </div>
             </a>
         {% else %}
-            <a class="chat" href="{% url 'chat' chat.id %}">
-                <img src="{{chat.is_private.second_user.profile_picture.url}}">
-                <div class="mesandname">
-                <span class = "chat_name">{{chat.is_private.second_user.name}}</span>
-                {% for mes in chat.is_private.second_user.message.all %}
+            <a class="pchat" href="{% url 'chat' chat.id %}">
+                {% if user.account.id == chat.admin.id %}
+                        <img src="{{chat.is_private.second_user.profile_picture.url}}">
+
+                        <div class="mesandname">
+                        <span class = "chat_name">{{chat.is_private.second_user.name}}</span>
+                            {% else %}
+                        <img src="{{chat.admin.profile_picture.url}}">
+
+                    <div class="mesandname">
+                    <span class = "chat_name">{{chat.admin.name}}</span>
+                {% endif %}
+                {% for mes in chat.message.all %}
                     {% if forloop.last %}
-                        {% if mes is not None %}<span class = "preview">{{mes.preview}}</span>{% endif %}
+                        <br>
+                        <span class = "preview">{{mes.user.name}} : {{mes.preview}}</span>
                     {% endif %}
                 {% endfor %}
+
+
                 </div>
             </a>
         {% endif %}
     {% endfor %}
-    </div>
-<div id="messages">
-    {% for mes in ourchat.message.all %}
-<!--    <img src="{{mes.user.profile_picture.url}}" class="profile_picture">-->
-    <div class="message">
-        <span class="name">{{mes.user}}</span><br>
-        <span class="mes">{{mes.message}}</span><br><br>
-    </div>
-    {% endfor %}
 </div>
+
+<div id="messages">
+    <div id="chat_header">
+        <span id="chat_photo">
+            {% if ourchat.is_private is None %}
+                <img src="{{ourchat.chat_photo.url}}">
+            {% else %}
+                {% if user.account.id == ourchat.admin.id %}
+                    <img src="{{ourchat.is_private.second_user.profile_picture.url}}">
+                {% else %}
+                    <img src="{{user.account.profile_picture.url}}">
+                {% endif %}
+
+            {% endif %}
+        </span>
+        <span id="chat_name">{{ourchat.name}}</span><br>
+        {% if ourchat.is_private is None %}
+
+            <span id="participants">Количество участников: {{ourchat.participants.count}}</span>
+            <br>
+            <a href="{% url 'moreinfo' ourchat.id %}" id="more">Подробнее...</a>
+        {% else %}
+            {% if user.account.id == ourchat.admin.id %}
+                <a href="{% url 'main page' ourchat.is_private.second_user.username %}" id="more">Посмотреть профиль...</a>
+            {% else %}
+                <a href="{% url 'main page' ourchat.admin.username %}" id="more">Посмотреть профиль...</a>
+            {% endif %}
+        {% endif %}
+        
+    </div>
+        {% if ourchat.message is not None %}
+        {% for mes in ourchat.message.all %}
+        <div class="message">
+            <img class="profile_picture" src="{{mes.user.profile_picture.url}}">
+            <div class="messagefromuser">
+                    <span class="name">{{mes.user}}</span>
+                    <span style="display : none" class="username">{{mes.user.username}}</span>
+                    <span class="time">{{mes.send_time|date:"H:i"}}</span><br>
+                    <span class="mes">{{mes.message}}</span>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+</div>
+
 <div id="tosendmessage">
     <div id="tosendmessagerow">
         <input type="text" id="putmessage" placeholder="Введите сообщение...">
         <button type="button" id="sendmessage">send</button>
     </div>
 </div>
-<script src="{% static 'js/chat.js' %}"></script>
 
+<script src="{% static 'js/chat.js' %}"></script>
+<script src="{% static 'js/redirect.js' %}"></script>
+<script src="{% static 'js/new_messages.js' %}"></script>
 {% endblock %}

@@ -3,7 +3,9 @@
     padding: 0;
     background-color: #17212b;
     color: white;
-    font-family: 'Segoe UI';
+    font-family: "Ledger", serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
 #info {
@@ -37,8 +39,12 @@
     color: #6d7883;
     text-align: left;
 }
-#editprofile {
+.ref {
     text-align: left;
     font-style: italic;
     margin-top: 15px;
+}
+#deleteprofile a{
+    color: red;
+    font-style: italic;
 }

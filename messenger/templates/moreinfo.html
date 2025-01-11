@@ -1,0 +1,31 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/moreinfo.css' %}
+{% endblock %}
+{% block content %}
+<div id="info">
+    <p id = 'chat_id' style="display: none;">{{chat.id}}</p>
+    <p id = 'token' style="display: none;">{{user.auth_token.key}}</p>
+    <span id="chat_photo"><img src = "{{chat.chat_photo.url}}"></span>
+    <div id="name">{{chat.name}}</div>
+    <div id="time">Дата создания чата: <br>{{chat.time_create|date:"d.m.Y"}}</div>
+    <div id="show"><a href="{% url 'show_participants' chat.id %}">Посмотреть участников беседы</a></div>
+    <div id="about">Описание:<br>{{chat.about}}</div>
+    {% if chat.admin.id == user.account.id %}<div id="delete_chat"><a href="{% url 'delete_chat' chat.id %}">Удалить чат...</a></div>{% endif %}
+    {% if chat.admin.id == user.account.id %}<div id="update_chat"><a href="{% url 'update chat' chat.id %}">Редактировать чат...</a></div>{% endif %}
+    <div id="tochat"><a href="{% url 'chat' chat.id %}">Перейти к чату...</a></div>
+
+</div>
+<script>
+    const info = document.getElementById('info');
+    var token = document.getElementById('token').innerHTML;
+
+    info.style.margin = `${window.innerHeight/2.5}px 0 0 ${window.innerWidth/2.5}px`;
+    
+   
+</script>
+{% endblock %}
