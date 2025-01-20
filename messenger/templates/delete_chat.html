@@ -1,0 +1,28 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/new_chat.css' %}
+{% endblock %}
+{% block content %}
+<div id="delete_chat">
+     <div id="form">
+         <h1 style="text-align : center">Вы действительно хотите удалить чат <u>{{chat.name}}</u>?</h1>
+        <form method="POST" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="submit">Удалить</button>
+        </form>
+    </div>
+</div>
+<script>
+    const delete_chat = document.getElementById('delete_chat');
+
+    delete_chat.style.width = window.innerWidth + 'px';
+    delete_chat.style.height = String(parseInt(window.innerHeight) - 20) + 'px';
+
+</script>
+<script src="{% static 'js/buttons.js' %}"></script>
+{% endblock %}

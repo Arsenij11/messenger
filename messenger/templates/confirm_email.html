@@ -1,0 +1,42 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+Пароль был успешно изменён
+{% endblock %}
+{% block css %}
+{% static 'css/authorization.css' %}
+{% endblock %}
+{% block content %}
+<div id="form">
+<h1>Подтверждение регистрации</h1>
+<p>На e-mail, который Вы указали при регистрации, был отправлен код подтверждения.<br>Введите его ниже</p>
+
+<form method="POST" action="">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Отправить</button>
+</form>
+</div>
+<script>
+    let form = document.getElementById('form');
+    let height = window.innerHeight;
+    let width = window.innerWidth;
+    let button = document.querySelector('button');
+  
+    form.style.marginTop = Math.floor(height/3.5) + 'px';
+    form.style.marginLeft = Math.floor(width/2.5) + 'px';
+    form.style.height = '320px';
+    form.style.width = '600px';
+
+    button.style.width = '100px';
+    button.addEventListener('mouseover', (event)=>{
+      let el = event.target;
+      el.style = 'cursor: pointer; background-color: #808080; width: 100px'
+    });
+    button.addEventListener('mouseout', (event)=> {
+      let el = event.target;
+      el.style = 'cursor: pointer; background-color: #0e1621; width: 100px';
+    });
+  
+  </script>
+{% endblock %}

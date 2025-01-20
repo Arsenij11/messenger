@@ -1,0 +1,36 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/moreinfo.css' %}
+{% endblock %}
+{% block content %}
+<div id="moreinfo">
+    <div id="info">
+        <p id = 'chat_id' style="display: none;">{{chat.id}}</p>
+        <p id = 'token' style="display: none;">{{user.auth_token.key}}</p>
+        <span id="chat_photo"><img src = "{{chat.chat_photo.url}}"></span>
+        <div id="name">{{chat.name}}</div>
+        <p id="time">Дата создания чата: {{chat.time_create|date:"d.m.Y"}}</p>
+        <div id="show"><a href="{% url 'show_participants' chat.id %}">Посмотреть участников беседы</a></div>
+        <div id="about">Описание:<br>{{chat.about}}</div>
+        {% if chat.admin.id == user.account.id %}<div id="delete_chat"><a href="{% url 'delete_chat' chat.id %}">Удалить чат...</a></div>{% endif %}
+        {% if chat.admin.id == user.account.id %}<div id="update_chat"><a href="{% url 'update chat' chat.id %}">Редактировать чат...</a></div>{% endif %}
+        <div id="tochat"><a href="{% url 'chat' chat.id %}">Перейти к чату...</a></div>
+    </div>
+</div>
+<script>
+    const info = document.getElementById('info');
+    const moreinfo = document.getElementById('moreinfo');
+    var token = document.getElementById('token').innerHTML;
+
+    console.log(info.style.height === '' ? 'Высота не определена' : info.style.height);
+    console.log(info.style.width === '' ? 'Ширина не определена' : info.style.width);
+
+    moreinfo.style.width = window.innerWidth + 'px';
+    moreinfo.style.height = String(parseInt(innerHeight) - 20) + 'px';
+
+</script>
+{% endblock %}

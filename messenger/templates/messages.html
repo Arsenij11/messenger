@@ -1,0 +1,106 @@
+{% load static %}
+<html>
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            background-color: #0e1621;
+            color: white;
+            font-family: 'Ledger', serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+        #messages {
+            background-color: #0e1621;
+            text-align: center;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            /*justify-content: flex-start;*/
+            left: 300px;
+            top: 140px;
+            /*bottom: 10px;*/
+            height: 600px;
+            /*margin-bottom: 50px;*/
+        }
+        .profile_picture {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            float: left;
+            margin-left: 0;
+        }
+        .message {
+            min-height: 45px;
+            min-width: 175px;
+            width: auto;
+            height: auto;
+            background-color: #182533;
+            position: absolute;
+            left: 0;
+            text-align: left;
+            margin-left: 5px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        .name {
+            color: #5faee7;
+            background-color: #182533;
+            /* display: inline-block; */
+        }
+
+        .messagefromuser {
+            margin-left: 50px;
+            display: flex;
+            flex-direction: column;
+        }
+        .mes {
+            /*display: inline-block;*/
+            background-color: #182533;
+        }
+        .time {
+            color: grey;
+            font-size: 8px;
+            text-align: right;
+            margin-left: 10px;
+            background-color: #182533;
+        }
+    </style>
+</head>
+<body>
+<div id="messages">
+    {% if ourchat.message is not None %}
+    {% for mes in ourchat.message.all %}
+    <div class='message'>
+        <img class='profile_picture' src='{{mes.user.profile_picture.url}}'>
+        <span class='messagefromuser'>
+            <span class='name'>{{mes.user}}</span>
+            <span style='display : none' class='username'>{{mes.user.username}}</span>
+            <span class='mes'>{{mes.message}}</span>
+            <span class='time'>{{mes.send_time|date:'H:i'}}</span>
+        </span>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<!--<script>-->
+<!--    setstyles();-->
+<!--    function setstyles () {-->
+<!--        let allchatmessages = document.querySelectorAll('.message');-->
+<!--        let j = 0;-->
+<!--        for (let i = allchatmessages.length - 1; i >= 0 ; i&#45;&#45;) {-->
+<!--            if (typeof allchatmessages[i].style !== 'undefined'){-->
+<!--                j++;-->
+<!--                let height = window.innerHeight;-->
+<!--                height -= 60 * j;-->
+<!--                allchatmessages[i].style.top = height + 'px';-->
+<!--            }-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+<!--<script src='{% static 'js/redirect.js' %}'></script>-->
+<!--<script src='{% static 'js/new_messages.js' %}'></script>-->
+</body>
+</html>

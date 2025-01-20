@@ -1,0 +1,27 @@
+
+#participants {
+    height: auto;
+    width: 300px;
+    border: 1px solid white;
+    font-size: 25px;
+}
+.peoples {
+    padding: 15px 0 15px 0;
+    font-size: 16px;
+}
+.p_name {
+    color: #5faee7;
+    margin-top: 5px;
+}
+.p_url a {
+    font-size: 11px;
+    margin-top: 5px;
+    font-style: italic;
+}
+.p_photo img {
+    height: 60px;
+    width: 60px;
+    border-radius: 30px;
+    float: left;
+    margin-right: 5px;
+}

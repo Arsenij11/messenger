@@ -1,0 +1,28 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/new_chat.css' %}
+{% endblock %}
+{% block content %}
+<div id="create_chat">
+     <div id="form">
+         <h1>{{title}}</h1>
+        <form method="POST" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="submit">Отправить</button>
+        </form>
+     </div>
+</div>
+<script>
+    const create_chat = document.getElementById('create_chat');
+
+    create_chat.style.width = window.innerWidth + 'px';
+    create_chat.style.height = String(parseInt(window.innerHeight) - 20) + 'px';
+
+</script>
+<script src="{% static 'js/buttons.js' %}"></script>
+{% endblock %}
