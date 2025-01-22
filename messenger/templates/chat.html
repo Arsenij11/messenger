@@ -9,6 +9,7 @@
 {% block content %}
 <p style="display : none" id="user">{{user.account.id}}</p>
 <p style="display : none" id="username">{{user.account.name}}</p>
+<p style="display : none" id="current_username">{{user.username}}</p>
 <p style="display : none" id="chat">{{ourchat.id}}</p>
 <p style="display : none" id="user_photo">{{user.account.profile_picture.url}}</p>
 <p style="display : none" id="token">{{token}}</p>
@@ -101,9 +102,10 @@
         <span class='messagefromuser'>
             <span class='name'>{{mes.user}}</span>
             <span style='display : none' class='username'>{{mes.user.username}}</span>
+                <span style='display : none' class='mes_id'>{{mes.id}}</span>
             <span class='mes'>{{mes.message}}</span>
             <span class='time'>{{mes.send_time|date:'H:i'}}</span>
-        </span>
+
     </div>
     {% endfor %}
     {% endif %}
@@ -118,7 +120,10 @@
 </div>
 
 
+<script src="{% static 'js/chat_header.js' %}"></script>
 <script src="{% static 'js/chat.js' %}"></script>
 <script src="{% static 'js/redirect.js' %}"></script>
 <script src="{% static 'js/new_messages.js' %}"></script>
+<script src="{% static 'js/scroll.js' %}"></script>
+<script src="{% static 'js/delete.js' %}"></script>
 {% endblock %}

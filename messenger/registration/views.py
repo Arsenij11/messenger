@@ -35,12 +35,12 @@ class LoginUser(LoginView):
         return super().form_valid(form)
 
     def get_success_url(self):
-
-        requests.post(url = 'http://127.0.0.1:8000/auth/token/login/',  data = {
-                                                                        'username' : self.request.user.username,
-                                                                        'password' : self.password,
-                                                                        }
-                      )
+        if not Token.objects.filter(user_id = self.request.user.id).exists():
+            requests.post(url = 'http://127.0.0.1:8000/auth/token/login/',  data = {
+                                                                            'username' : self.request.user.username,
+                                                                            'password' : self.password,
+                                                                            }
+                          )
         return reverse_lazy('create_profile')
 
     def dispatch(self, request, *args, **kwargs):
@@ -89,9 +89,6 @@ def confirm_email(request, user_id):
 
 def logout_user(request):
     if request.user.is_authenticated:
-        requests.post('http://127.0.0.1:8000/auth/token/logout/', headers = {
-            'Authorization' : 'Token ' + Token.objects.get(user_id=request.user.id).key})
-
         logout(request)
 
     return redirect(reverse('registration:login'))

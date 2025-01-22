@@ -107,7 +107,7 @@ class DeleteProfile(LoginRequiredMixin, generic.DeleteView):
     def dispatch(self, request, *args, **kwargs):
         if not Account.objects.filter(username = self.kwargs['username']).exists():
             return redirect(reverse('create_profile'))
-        if Account.objects.get(username = self.kwargs['username']).user.id != request.user.id:
+        elif Account.objects.get(username = self.kwargs['username']).user.id != request.user.id:
             return redirect(reverse('main page', kwargs = {'username' : request.user.username}))
 
         return super(DeleteProfile, self).dispatch(request, *args, **kwargs)
@@ -146,10 +146,14 @@ class AllChats(LoginRequiredMixin, generic.ListView):
     def dispatch(self, request, *args, **kwargs):
         if not Account.objects.filter(user_id=request.user.id).exists():
             return redirect(reverse('create_profile'))
-        if not Chat.objects.filter(Q(admin_id = request.user.account.id) | Q(is_private__second_user = request.user.account)).exists():
+        if (not Chat.objects.filter(Q(admin_id = request.user.account.id) |
+                                   Q(is_private__second_user_id = request.user.account.id) &
+                                   ~Q(is_private=None)).exists() and
+                not Participants.objects.filter(user_id = request.user.account.id).exists()):
             return redirect(reverse('new_chat'))
 
 
+        # Добавить Participants
         return super(AllChats, self).dispatch(request,*args, **kwargs)
 
 
@@ -220,6 +224,12 @@ class CreateChat(LoginRequiredMixin, generic.CreateView):
         Participants.objects.create(user_id = chat.admin.id, chat_id = chat.id)
         return super().get_success_url()
 
+    def dispatch(self, request, *args, **kwargs):
+        if not Account.objects.filter(user_id = request.user.id).exists():
+            return redirect(reverse('create_profile'))
+
+        return super(CreateChat, self).dispatch(request, *args, **kwargs)
+
 
 
 class UpdateChat(LoginRequiredMixin, generic.UpdateView):
@@ -238,6 +248,18 @@ class UpdateChat(LoginRequiredMixin, generic.UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Обновление чата'
         return context
+
+    def dispatch(self, request, *args, **kwargs):
+        if not Chat.objects.filter(pk=self.kwargs['chat_id']).exists():
+            return redirect(reverse('new_chat'))
+
+        if Chat.objects.get(pk=self.kwargs['chat_id']).is_private is not None:
+            return redirect(reverse('chat', kwargs={'chat_id': self.kwargs['chat_id']}))
+
+        if Chat.objects.get(pk=self.kwargs['chat_id']).admin.pk != request.user.account.id:
+            return redirect(reverse('chat', kwargs={'chat_id': self.kwargs['chat_id']}))
+
+        return super(UpdateChat, self).dispatch(request, *args, **kwargs)
 
 class DeleteChat(LoginRequiredMixin, generic.DeleteView):
     template_name = 'delete_chat.html'
@@ -258,6 +280,9 @@ class DeleteChat(LoginRequiredMixin, generic.DeleteView):
         if not Chat.objects.filter(pk = self.kwargs['chat_id']).exists():
             return redirect(reverse('new_chat'))
 
+        if Chat.objects.get(pk = self.kwargs['chat_id']).is_private is not None:
+            return redirect(reverse('chat', kwargs={'chat_id' : self.kwargs['chat_id']}))
+
         if Chat.objects.get(pk = self.kwargs['chat_id']).admin.pk != request.user.account.id:
             return redirect(reverse('chat', kwargs= {'chat_id' : self.kwargs['chat_id']}))
 
@@ -270,9 +295,9 @@ class DeleteChat(LoginRequiredMixin, generic.DeleteView):
 def toinvite(request, user_id):
     if not Account.objects.filter(user_id=request.user.id).exists():
         return redirect(reverse('create_profile'))
-    if not Account.objects.filter(id = user_id).exists():
+    elif not Account.objects.filter(id = user_id).exists():
         return redirect(reverse('main page', kwargs = {'username' : request.user.username}))
-    if request.user.account.id == int(user_id):
+    elif request.user.account.id == int(user_id):
         return redirect(reverse('main page', kwargs = {'username' : request.user.username}))
 
     chats = list(Chat.objects.filter(admin_id = request.user.account.id, is_private = None))

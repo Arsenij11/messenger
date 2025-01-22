@@ -2,8 +2,9 @@ import json
 
 from django.http import HttpResponseForbidden, HttpResponse
 from django.shortcuts import render
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
 
 from .models import Chat, Message, Participants, Account
 from .permissions import IsOwnerOrReadOnly, IsAdminOfChat
@@ -119,4 +120,31 @@ class MessageListAPIView(generics.ListAPIView):
         return HttpResponse(json.dumps(messages, ensure_ascii=False))
 
 
+class DeleteMessageAPIView(generics.DestroyAPIView):
+    permission_classes = (IsAuthenticated,)
 
+    def get_object(self):
+        obj = Message.objects.get(pk = self.kwargs['mes_id'])
+
+        return obj
+
+    def dispatch(self, request, *args, **kwargs):
+
+        if not Message.objects.filter(pk = self.kwargs['mes_id']).exists():
+            return HttpResponse(json.dumps({'detail' : 'Такого сообщения не существует'}, ensure_ascii=False))
+        if Message.objects.get(pk = self.kwargs['mes_id']).user.user.id != Token.objects.get(key = request.auth.key).user.id:
+            return HttpResponse(json.dumps({'detail' : 'Вы не являетесь автором сообщения'}, ensure_ascii=False))
+
+
+        return super(DeleteMessageAPIView, self).dispatch(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        response = {
+            'chat' : instance.chat,
+            'user' : instance.user,
+            'message' : instance.message,
+            'send_time' : instance.send_time,
+        }
+        self.perform_destroy(instance)
+        return Response(json.dumps({'obj' : response}, ensure_ascii=False), status=status.HTTP_204_NO_CONTENT)

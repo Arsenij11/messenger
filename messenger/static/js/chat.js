@@ -3,20 +3,20 @@ var user_id = Number(document.getElementById('user').innerHTML);
 var username = document.getElementById('username').innerHTML;
 var user_photo = document.getElementById('user_photo').innerHTML;
 var token = document.getElementById('token').innerHTML;
-
+var header = document.getElementById('header');
 
 var messages = document.getElementById('messages');
 let chats = document.getElementById('chats');
-let everychat = chats.children;
 
-messages.style.width= `${Number(window.innerWidth) - 200}px`;
+messages.style.width= `${parseInt(header.style.width) - 300}px`;
+messages.style.height = `${parseInt(innerHeight) - 20 - 30 - 100}px`
 chats.style.height = `${window.innerHeight}px`;
 
 
 setstyles();
 
 let putmessagefield = document.getElementById('putmessage');
-putmessagefield.style.width = `${parseInt(window.innerWidth) - 300}px`;
+putmessagefield.style.width = `${parseInt(window.innerWidth) - 370}px`;
 putmessagefield.style.marginLeft = 300 + 'px';
 
 let button = document.getElementById('sendmessage');
@@ -56,7 +56,6 @@ function newmessage (data) {
         console.log(options);
        fetch(`http://127.0.0.1:8000/api/chat/new_message/${data['chat']}/${data['user']}`, options)
         .then((response) => {
-                console.log('response', response.body);
                 return response.json();
               })
         
@@ -64,7 +63,7 @@ function newmessage (data) {
         .then(
                 (json) => {
 
-                        console.log('Всё ок: ', json);
+                        const messages = document.getElementById('messages');
 
                         let create_new_message = document.createElement('div');
                         create_new_message.setAttribute('class', 'message');
@@ -87,6 +86,19 @@ function newmessage (data) {
                         from_user.innerHTML = username + '<br>';
                         from_user.setAttribute('class', 'name');
                         create_new_message.appendChild(from_user);
+
+                        let usern = document.createElement('span');
+                        usern.style.display = 'none';
+                        usern.innerHTML = data['user'];
+                        usern.setAttribute('class', 'username');
+                        create_new_message.appendChild(usern);
+
+
+                        let mes_id = document.createElement('span');
+                        mes_id.style.display = 'none';
+                        mes_id.innerHTML = data['id'];
+                        mes_id.setAttribute('class', 'mes_id');
+                        create_new_message.appendChild(mes_id);
 
                         let message_text = document.createElement('span');
                         message_text.innerHTML = json['message'];
