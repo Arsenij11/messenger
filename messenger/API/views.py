@@ -3,6 +3,7 @@ import json
 from django.http import HttpResponseForbidden, HttpResponse
 from django.shortcuts import render
 from rest_framework import generics, viewsets, status
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
@@ -22,20 +23,24 @@ class NewMessageAPIView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         if not Chat.objects.filter(pk=self.kwargs['chat_id']).exists() or not Account.objects.filter(pk = self.kwargs['user_id']).exists():
-            return HttpResponse(json.dumps({'detail' : 'Данного пользователя/чата не существует'}, ensure_ascii=False))
+            return HttpResponse(json.dumps({'detail' : 'Данного пользователя/чата не существует'},
+                                           ensure_ascii=False), status = 404)
 
         if not Participants.objects.filter(user_id = self.kwargs['user_id'], chat_id = self.kwargs['chat_id']).exists() and\
             Chat.objects.get(pk = self.kwargs['chat_id']).is_private is None:
-            return HttpResponse(json.dumps({'detail' : 'Вы не являетесь участником данного чата'}, ensure_ascii=False))
+            return HttpResponse(json.dumps({'detail' : 'Вы не являетесь участником данного чата'},
+                                           ensure_ascii=False), status = 403)
 
         if Chat.objects.get(pk = self.kwargs['chat_id']).is_private is None:
             participant = Participants.objects.get(user_id = self.kwargs['user_id'], chat_id = self.kwargs['chat_id'])
             if request.auth.key != participant.user.user.auth_token.key:
-                return HttpResponse(json.dumps({'detail' : 'Вы не являетесь участником данного чата'}, ensure_ascii=False))
+                return HttpResponse(json.dumps({'detail' : 'Вы не являетесь участником данного чата'},
+                                               ensure_ascii=False), status=403)
         else:
             chat = Chat.objects.get(pk = self.kwargs['chat_id'])
             if request.auth.key != chat.admin.user.auth_token.key and request.auth.key != chat.is_private.second_user.user.auth_token.key:
-                return HttpResponse(json.dumps({'detail' : 'Вы не являетесь участником данного чата'}, ensure_ascii=False))
+                return HttpResponse(json.dumps({'detail' : 'Вы не являетесь участником данного чата'},
+                                               ensure_ascii=False), status = 403)
 
 
         return self.create(request, *args, **kwargs)
@@ -47,13 +52,16 @@ class NewParticipantAPIView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         if Chat.objects.get(pk=self.kwargs['chat_id']).admin.user.id != Token.objects.get(key = request.auth.key).user.id:
-            return HttpResponse(json.dumps({'detail' : 'Доступ запрещён. Вы не являетесь администратором чата'}, ensure_ascii=False))
+            return HttpResponse(json.dumps({'detail' : 'Доступ запрещён. Вы не являетесь администратором чата'},
+                                           ensure_ascii=False), status = 403)
 
         if Participants.objects.filter(chat_id = self.kwargs['chat_id'], user_id = self.kwargs['user_id']).exists():
-            return HttpResponse(json.dumps({'detail' : 'Данный пользователь уже является участником чата'}, ensure_ascii=False))
+            return HttpResponse(json.dumps({'detail' : 'Данный пользователь уже является участником чата'},
+                                           ensure_ascii=False), status = 400)
 
         if Chat.objects.get(pk = self.kwargs['chat_id']).is_private is not None:
-            return HttpResponse(json.dumps({'detail' : 'Данный чат является приватным'}, ensure_ascii=False))
+            return HttpResponse(json.dumps({'detail' : 'Данный чат является приватным'}, ensure_ascii=False),
+                                status=400)
 
         return self.create(request, *args, **kwargs)
 
@@ -62,30 +70,32 @@ class NewParticipantAPIView(generics.CreateAPIView):
         return HttpResponse(json.dumps({
             'chat_id' : account.chat_id,
             'user_id' : account.user_id,
-        }, ensure_ascii=False))
+        }, ensure_ascii=False), status=201)
 
 # class CreateChatAPIView(generics.CreateAPIView):
 #     queryset = Chat.objects.all()
 #     serializer_class = Chat
 #     permission_classes = (IsAuthenticated,)
 
-class DeleteChatAPIView(generics.DestroyAPIView):
-    queryset = Chat.objects.all()
-    serializer_class = ChatSerializer
-    permission_classes = (IsAuthenticated,)
-    lookup_field = 'id'
-
-    def delete(self, request, *args, **kwargs):
-        if Chat.objects.get(pk = self.kwargs['chat_id']).is_private is not None:
-            if Chat.objects.get(pk=self.kwargs['chat_id']).admin.user.id != Token.objects.get(key=request.auth.key).user.id\
-                and Chat.objects.get(pk=self.kwargs['chat_id']).is_private.user.id != Token.objects.get(key=request.auth.key).user.id:
-                    return HttpResponse(json.dumps({'detail' : 'Доступ запрещён. Вы не являетесь администратором чата'}, ensure_ascii=False))
-
-        else:
-            if Chat.objects.get(pk=self.kwargs['chat_id']).admin.user.id != Token.objects.get(key=request.auth.key).user.id:
-                return HttpResponse(json.dumps({'detail': 'Доступ запрещён. Вы не являетесь администратором чата'}, ensure_ascii=False))
-
-        return self.destroy(request, *args, **kwargs)
+# class DeleteChatAPIView(generics.DestroyAPIView):
+#     queryset = Chat.objects.all()
+#     serializer_class = ChatSerializer
+#     permission_classes = (IsAuthenticated,)
+#     lookup_field = 'id'
+#
+#     def delete(self, request, *args, **kwargs):
+#         if not Chat.objects.filter(pk = self.kwargs['chat_id']).exists():
+#             return HttpResponse()
+#         if Chat.objects.get(pk = self.kwargs['chat_id']).is_private is not None:
+#             if Chat.objects.get(pk=self.kwargs['chat_id']).admin.user.id != Token.objects.get(key=request.auth.key).user.id\
+#                 and Chat.objects.get(pk=self.kwargs['chat_id']).is_private.user.id != Token.objects.get(key=request.auth.key).user.id:
+#                     return HttpResponse(json.dumps({'detail' : 'Доступ запрещён. Вы не являетесь администратором чата'}, ensure_ascii=False), status=403)
+#
+#         else:
+#             if Chat.objects.get(pk=self.kwargs['chat_id']).admin.user.id != Token.objects.get(key=request.auth.key).user.id:
+#                 return HttpResponse(json.dumps({'detail': 'Доступ запрещён. Вы не являетесь администратором чата'}, ensure_ascii=False), status = 403)
+#
+#         return self.destroy(request, *args, **kwargs)
 
 
 class MessageListAPIView(generics.ListAPIView):
@@ -97,17 +107,17 @@ class MessageListAPIView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         if not Chat.objects.filter(pk=self.kwargs['chat_id']).exists():
-            return HttpResponse(json.dumps({'detail' : 'Данного чата не существует'}, ensure_ascii=False))
+            return HttpResponse(json.dumps({'detail' : 'Данного чата не существует'}, ensure_ascii=False), status=404)
 
         if Chat.objects.get(pk = self.kwargs['chat_id']).is_private is None:
             user_ids = [p.user.user.id for p in Chat.objects.get(pk=self.kwargs['chat_id']).participants.all()]
             if request.auth.key not in [token.key for token in Token.objects.filter(user_id__in = user_ids)]:
-                return HttpResponse(json.dumps({'detail' : 'Вы не являетесь участником беседы'}, ensure_ascii=False))
+                return HttpResponse(json.dumps({'detail' : 'Вы не являетесь участником беседы'}, ensure_ascii=False), status=403)
 
         else:
             user_ids = [Chat.objects.get(pk=self.kwargs['chat_id']).admin.user.pk, Chat.objects.get(pk=self.kwargs['chat_id']).is_private.second_user.user.pk]
             if request.auth.key not in [token.key for token in Token.objects.filter(user_id__in = user_ids)]:
-                return HttpResponse(json.dumps({'detail' : 'Вы не являетесь участником беседы'}, ensure_ascii=False))
+                return HttpResponse(json.dumps({'detail' : 'Вы не являетесь участником беседы'}, ensure_ascii=False), status=403)
 
 
         return self.list(request, *args, **kwargs)
@@ -117,34 +127,54 @@ class MessageListAPIView(generics.ListAPIView):
                     m.user.profile_picture.url, 'username' : m.user.username, }
                     for m in Message.objects.filter(chat_id = self.kwargs['chat_id'])]
 
-        return HttpResponse(json.dumps(messages, ensure_ascii=False))
+        return HttpResponse(json.dumps(messages, ensure_ascii=False), status=200)
 
 
-class DeleteMessageAPIView(generics.DestroyAPIView):
+class DeleteMessageAPIView(generics.RetrieveDestroyAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_object(self):
-        obj = Message.objects.get(pk = self.kwargs['mes_id'])
+        return get_object_or_404(Message, pk=self.kwargs['mes_id'])
 
-        return obj
-
-    def dispatch(self, request, *args, **kwargs):
-
-        if not Message.objects.filter(pk = self.kwargs['mes_id']).exists():
-            return HttpResponse(json.dumps({'detail' : 'Такого сообщения не существует'}, ensure_ascii=False))
-        if Message.objects.get(pk = self.kwargs['mes_id']).user.user.id != Token.objects.get(key = request.auth.key).user.id:
-            return HttpResponse(json.dumps({'detail' : 'Вы не являетесь автором сообщения'}, ensure_ascii=False))
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(
+                json.dumps({'detail': 'Метод GET недоступен'}, ensure_ascii=False),
+                status=403,
+            )
 
 
-        return super(DeleteMessageAPIView, self).dispatch(request, *args, **kwargs)
+    def delete(self, request, *args, **kwargs):
+        # Проверяем, существует ли сообщение
+        if not Message.objects.filter(pk=self.kwargs['mes_id']).exists():
+            return HttpResponse(
+                json.dumps({'detail': 'Такого сообщения не существует'}, ensure_ascii=False),
+                status=404,
+            )
+
+        # Проверяем наличие токена
+        if not request.auth or not hasattr(request.auth, 'key'):
+            return HttpResponse(
+                json.dumps({'detail': 'Токен отсутствует или некорректен'}, ensure_ascii=False),
+                status=401,
+            )
+
+        # Проверяем, является ли пользователь автором сообщения
+        message = Message.objects.get(pk=self.kwargs['mes_id'])
+        if message.user.user.id != Token.objects.get(key=request.auth.key).user.id:
+            return HttpResponse(
+                json.dumps({'detail': 'Вы не являетесь автором сообщения'}, ensure_ascii=False),
+                status=403,
+            )
+
+        return self.destroy(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         response = {
-            'chat' : instance.chat,
-            'user' : instance.user,
-            'message' : instance.message,
-            'send_time' : instance.send_time,
+            'chat': instance.chat.id,
+            'user': instance.user.id,
+            'message': instance.message,
+            'send_time': instance.send_time.isoformat(),
         }
         self.perform_destroy(instance)
-        return Response(json.dumps({'obj' : response}, ensure_ascii=False), status=status.HTTP_204_NO_CONTENT)
+        return HttpResponse(json.dumps(response, ensure_ascii=False), status=204)

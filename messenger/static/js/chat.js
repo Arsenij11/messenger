@@ -56,13 +56,14 @@ function newmessage (data) {
         console.log(options);
        fetch(`http://127.0.0.1:8000/api/chat/new_message/${data['chat']}/${data['user']}`, options)
         .then((response) => {
+                // console.log(response.json());
                 return response.json();
               })
         
         .catch((error) => { console.log(error) })
         .then(
                 (json) => {
-
+                        console.log(json)
                         const messages = document.getElementById('messages');
 
                         let create_new_message = document.createElement('div');
