@@ -23,50 +23,28 @@ for (let a of allchatmessages) {
                 });
                 span.addEventListener('click', (event) => {
                         let mes_id = a.querySelector('.mes_id').innerHTML;
-                        // const options = {
-                        //     method: 'DELETE',
-                        //     headers: {
-                        //         'Content-Type': 'application/json',
-                        //         'Authorization': 'Token ' + token,
-                        //     },
-                        // }
-                        let xhr = new XMLHttpRequest();
-                        xhr.responseType = 'json';
-                        xhr.open('DELETE', `http://127.0.0.1:8000/api/chat/delete_message/${mes_id}`);
-                        xhr.setRequestHeader('Content-Type', 'application/json');
-                        xhr.setRequestHeader('Authorization', 'Token ' + token);
-                        xhr.send();
-                        xhr.onload = function () {
-                            let json = xhr.response;
-                            console.log(json);
-                            // if (typeof json['detail'] !== 'undefined') {
-                            //
-                            //              console.log('Сообщение удалено');
-                            //              a.innerHTML = 'Сообщение удалено';
-                            //              a.setAttribute('class', 'deleted_message');
-                            //
-                            //
-                            //          }
-                            //          else {
-                            //              console.log(json);
-                            //          }
-                            }
+                        const options = {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Token ' + token,
+                            },
+                        }
 
-                        // fetch(`http://127.0.0.1:8000/api/chat/delete_message/${mes_id}`, options).
-                        // then((response)=> {return response.json()})
-                        // then((body) => {
-                        //      if (typeof json['detail'] !== 'undefined') {
-                        //
-                        //          console.log('Сообщение удалено');
-                        //          a.innerHTML = 'Сообщение удалено';
-                        //          a.setAttribute('class', 'deleted_message');
-                        //
-                        //
-                        //      }
-                        //      else {
-                        //          console.log(json);
-                        //      }
-                        //  })
+                        fetch(`http://127.0.0.1:8000/api/chat/delete_message/${mes_id}`, options).
+                        then((response)=> {return response.json()}).
+                        then((json) => {
+                             if (typeof json['detail'] === 'undefined') {
+
+                                 a.innerHTML = 'Сообщение удалено';
+                                 a.setAttribute('class', 'deleted_message');
+
+
+                             }
+                             else {
+                                 console.log(json);
+                             }
+                         })
 
                 })
             event.target.appendChild(span);
@@ -77,8 +55,6 @@ setInterval(()=> {
     const alldeletedmessages = document.querySelectorAll('.deleted_message');
     if (alldeletedmessages.length > 0){
         alldeletedmessages.forEach((a)=>a.style.display = 'none');
-
-        setTimeout( ()=>{
         let allchatmessages = document.querySelectorAll('.message');
         let j = 0;
         for (let i = allchatmessages.length - 1; i >= 0 ; i--) {
@@ -88,6 +64,6 @@ setInterval(()=> {
                 height -= 60 * j;
                 allchatmessages[i].style.top = height + 'px';
             }
-        }}, 500);
+        }
     }
 }, 3000);

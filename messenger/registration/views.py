@@ -1,5 +1,7 @@
 import json
 import random
+
+from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 import requests
 from django.contrib.auth import login, logout, get_user_model
@@ -31,7 +33,8 @@ class LoginUser(LoginView):
         f = form.cleaned_data
         self.password = f['password']
         if EmailConfirm.objects.filter(user__username=f['username']).exists():
-            return redirect(reverse('registration:confirm_email', kwargs={'user_id': get_user_model().objects.get(username=f['username']).pk}))
+            return redirect(reverse('registration:confirm_email',
+                                    kwargs={'username': f['username']}))
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -43,25 +46,38 @@ class LoginUser(LoginView):
                           )
         return reverse_lazy('create_profile')
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect(reverse('main page', kwargs={'username': request.user.username}))
-
-        return super(LoginView, self).dispatch(request, *args, **kwargs)
+    # def dispatch(self, request, *args, **kwargs):
+    #     if request.user.is_authenticated:
+    #         return redirect(reverse('main page', kwargs={'username': request.user.username}))
+    #
+    #     return super(LoginView, self).dispatch(request, *args, **kwargs)
 
 class Registration(CreateView):
     template_name = 'register.html'
     form_class = RegistrationForm
     extra_context = {'title': 'Регистрация'}
+    username = None
 
 
     def form_valid(self, form):
         form = form.save(commit=False)
-        self.user_id = form.id
+        self.username = form.username
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('registration:confirm_email', kwargs={'user_id': self.user_id})
+        return reverse('registration:confirm_email', kwargs={'username': self.username})
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(reverse('main page', kwargs={'username' : request.user.username}))
+        # if User.objects.filter(pk = request.user.id).exists():
+        #     if EmailConfirm.objects.filter(user_id = request.user.id).exists():
+        #         return redirect(reverse('registration:confirm_email', kwargs={'username' : request.user.username}))
+        #     else:
+        #         return redirect('registration:login')
+
+        return super(Registration, self).dispatch(request, *args, **kwargs)
+
 
 
 
@@ -72,7 +88,12 @@ class UserPasswordChange(PasswordChangeView):
 
 
 
-def confirm_email(request, user_id):
+def confirm_email(request, username):
+    user_id = get_object_or_404(User, username = username).id
+    if not EmailConfirm.objects.filter(user_id = user_id).exists():
+        return redirect(reverse('registration:login'))
+    # if request.user.id != user_id:
+    #     return redirect(reverse('registration:login'))
     if request.method == 'POST':
         form = Confirm_Email(request.POST,user_id=user_id)
         if form.is_valid():

@@ -1,7 +1,7 @@
 import json
 
 from django.http import HttpResponseForbidden, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework import generics, viewsets, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -17,8 +17,6 @@ from rest_framework.authtoken.models import Token
 
 
 class NewMessageAPIView(generics.CreateAPIView):
-    queryset = Message.objects.all()
-    serializer_class = MessageSerializer
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
@@ -45,9 +43,18 @@ class NewMessageAPIView(generics.CreateAPIView):
 
         return self.create(request, *args, **kwargs)
 
+    def create(self, request, *args, **kwargs):
+        new_message = Message.objects.create(chat_id = self.kwargs['chat_id'],
+                                             user_id = self.kwargs['user_id'],
+                                             message = dict(request.data)['message'])
+        message = {
+                    'id' : new_message.id,
+                    'user' : new_message.user.username,
+                    'message' : new_message.message
+                  }
+        return HttpResponse(json.dumps(message, ensure_ascii=False), status=201)
+
 class NewParticipantAPIView(generics.CreateAPIView):
-    queryset = Participants.objects.all()
-    serializer_class = ParticipantSerializer
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
@@ -77,25 +84,38 @@ class NewParticipantAPIView(generics.CreateAPIView):
 #     serializer_class = Chat
 #     permission_classes = (IsAuthenticated,)
 
-# class DeleteChatAPIView(generics.DestroyAPIView):
-#     queryset = Chat.objects.all()
-#     serializer_class = ChatSerializer
-#     permission_classes = (IsAuthenticated,)
-#     lookup_field = 'id'
-#
-#     def delete(self, request, *args, **kwargs):
-#         if not Chat.objects.filter(pk = self.kwargs['chat_id']).exists():
-#             return HttpResponse()
-#         if Chat.objects.get(pk = self.kwargs['chat_id']).is_private is not None:
-#             if Chat.objects.get(pk=self.kwargs['chat_id']).admin.user.id != Token.objects.get(key=request.auth.key).user.id\
-#                 and Chat.objects.get(pk=self.kwargs['chat_id']).is_private.user.id != Token.objects.get(key=request.auth.key).user.id:
-#                     return HttpResponse(json.dumps({'detail' : 'Доступ запрещён. Вы не являетесь администратором чата'}, ensure_ascii=False), status=403)
-#
-#         else:
-#             if Chat.objects.get(pk=self.kwargs['chat_id']).admin.user.id != Token.objects.get(key=request.auth.key).user.id:
-#                 return HttpResponse(json.dumps({'detail': 'Доступ запрещён. Вы не являетесь администратором чата'}, ensure_ascii=False), status = 403)
-#
-#         return self.destroy(request, *args, **kwargs)
+class DeleteChatAPIView(generics.RetrieveDestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return get_object_or_404(Chat, pk=self.kwargs['chat_id'])
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(json.dumps({'detail' : 'Метод GET не разрешён'}, ensure_ascii=False))
+
+    def delete(self, request, *args, **kwargs):
+        if not Chat.objects.filter(pk = self.kwargs['chat_id']).exists():
+            return HttpResponse(json.dumps({'detail' : 'Данного чата не существует'}, ensure_ascii=False))
+        if Chat.objects.get(pk = self.kwargs['chat_id']).is_private is not None:
+            if Chat.objects.get(pk=self.kwargs['chat_id']).admin.user.id != Token.objects.get(key=request.auth.key).user.id\
+                and Chat.objects.get(pk=self.kwargs['chat_id']).is_private.user.id != Token.objects.get(key=request.auth.key).user.id:
+                    return HttpResponse(json.dumps({'detail' : 'Доступ запрещён. Вы не являетесь администратором чата'}, ensure_ascii=False), status=403)
+
+        else:
+            if Chat.objects.get(pk=self.kwargs['chat_id']).admin.user.id != Token.objects.get(key=request.auth.key).user.id:
+                return HttpResponse(json.dumps({'detail': 'Доступ запрещён. Вы не являетесь администратором чата'}, ensure_ascii=False), status = 403)
+
+        return self.destroy(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        response = {
+            'id' : instance.id,
+            'name' : instance.name,
+            'about' : instance.about
+        }
+        self.perform_destroy(instance)
+        return HttpResponse(json.dumps(response, ensure_ascii=False))
 
 
 class MessageListAPIView(generics.ListAPIView):
@@ -123,7 +143,7 @@ class MessageListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        messages = [{'chat_id' : m.chat.id, 'name' :  m.user.name, 'message' : m.message, 'user_photo' :
+        messages = [{'id' : m.id,'chat_id' : m.chat.id, 'name' :  m.user.name, 'message' : m.message, 'user_photo' :
                     m.user.profile_picture.url, 'username' : m.user.username, }
                     for m in Message.objects.filter(chat_id = self.kwargs['chat_id'])]
 
@@ -177,4 +197,31 @@ class DeleteMessageAPIView(generics.RetrieveDestroyAPIView):
             'send_time': instance.send_time.isoformat(),
         }
         self.perform_destroy(instance)
-        return HttpResponse(json.dumps(response, ensure_ascii=False), status=204)
+        return HttpResponse(json.dumps(response, ensure_ascii=False))
+
+class DeleteProfileAPIView(generics.RetrieveDestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return get_object_or_404(Account, username = self.kwargs['username'])
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(json.dumps({'detail' : 'Метод GET не разрешён'}, ensure_ascii=False), status=400)
+
+    def delete(self, request, *args, **kwargs):
+        if not Account.objects.filter(username = self.kwargs['username']).exists():
+            return HttpResponse(json.dumps({'detail' : 'Данного аккаунта не существует'}, ensure_ascii=False), status=404)
+        elif Account.objects.get(username = self.kwargs['username']).user.auth_token.key != request.auth.key:
+            return HttpResponse(json.dumps({'detail' : 'Вы не являетесь владельцем аккаунта'}, ensure_ascii=False), status=403)
+
+        return self.destroy(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        response = {
+            'username': instance.username,
+            'name': instance.name
+        }
+        self.perform_destroy(instance)
+        return HttpResponse(json.dumps(response, ensure_ascii=False))
+

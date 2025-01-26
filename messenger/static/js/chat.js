@@ -4,13 +4,16 @@ var username = document.getElementById('username').innerHTML;
 var user_photo = document.getElementById('user_photo').innerHTML;
 var token = document.getElementById('token').innerHTML;
 var header = document.getElementById('header');
-
+var content = document.getElementById('content');
 var messages = document.getElementById('messages');
-let chats = document.getElementById('chats');
+
+// let chats = document.getElementById('chats');
+
+
 
 messages.style.width= `${parseInt(header.style.width) - 300}px`;
 messages.style.height = `${parseInt(innerHeight) - 20 - 30 - 100}px`
-chats.style.height = `${window.innerHeight}px`;
+// chats.style.height = `${parseInt(window.innerHeight) - 20}px`;
 
 
 setstyles();
@@ -23,7 +26,7 @@ let button = document.getElementById('sendmessage');
 
 
 putmessagefield.addEventListener('keypress' , (event)=>{
-button.style.display = 'table-cell';
+    console.log('Когда ввожу: ' + putmessagefield.value);
 })
 
 button.addEventListener('mouseover', (event)=>{
@@ -34,12 +37,14 @@ button.addEventListener('mouseout', (event)=>{
 });
 
 button.addEventListener('click', (event) => {
+        console.log("При отправке: " + putmessagefield.value);
         if (putmessagefield.value !== '') {
                 let data = {
                         "chat": chat_id,
                         "user": user_id,
                         "message": putmessagefield.value,
                 }
+                console.log("В data: " + data['message']);
                 newmessage(data);
         }
 });
@@ -53,7 +58,6 @@ function newmessage (data) {
                 },
                 body: JSON.stringify(data), 
         }
-        console.log(options);
        fetch(`http://127.0.0.1:8000/api/chat/new_message/${data['chat']}/${data['user']}`, options)
         .then((response) => {
                 // console.log(response.json());
@@ -68,6 +72,7 @@ function newmessage (data) {
 
                         let create_new_message = document.createElement('div');
                         create_new_message.setAttribute('class', 'message');
+
 
                         let profile_picture = document.createElement('img');
                         profile_picture.setAttribute('class', 'profile_picture');
@@ -90,14 +95,14 @@ function newmessage (data) {
 
                         let usern = document.createElement('span');
                         usern.style.display = 'none';
-                        usern.innerHTML = data['user'];
+                        usern.innerHTML = json['user'];
                         usern.setAttribute('class', 'username');
                         create_new_message.appendChild(usern);
 
 
                         let mes_id = document.createElement('span');
                         mes_id.style.display = 'none';
-                        mes_id.innerHTML = data['id'];
+                        mes_id.innerHTML = json['id'];
                         mes_id.setAttribute('class', 'mes_id');
                         create_new_message.appendChild(mes_id);
 
@@ -113,6 +118,51 @@ function newmessage (data) {
                         send_time.innerHTML = `${time.getHours()}:${time.getMinutes()}`;
                         create_new_message.appendChild(send_time);
 
+                        create_new_message.addEventListener('dblclick', (event)=> {
+                            let open_delete = document.querySelector('.delete');
+                            if (open_delete !== null) {
+                                open_delete.remove();
+                            }
+                            let span = document.createElement('span');
+                            span.style.top = `${parseInt(event.target.style.height) / 2}px`;
+                            span.style.left = `${parseInt(event.target.style.width) / 2}px`;
+                            span.textContent = 'Удалить';
+                            span.setAttribute('class', 'delete');
+                            span.addEventListener('mouseover', (event) => {
+                                event.target.style.cursor = 'pointer';
+                            });
+                            span.addEventListener('mouseout', (event) => {
+                                event.target.style.cursor = 'none';
+                            });
+                            span.addEventListener('click', (event) => {
+                                let mes_id = json['id'];
+                                console.log(mes_id);
+                                const options = {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': 'Token ' + token,
+                                    },
+                                }
+
+                                fetch(`http://127.0.0.1:8000/api/chat/delete_message/${mes_id}`, options).
+                                then((response) => {
+                                    return response.json();
+                                }).then((json) => {
+                                    if (typeof json['detail'] === 'undefined') {
+
+                                        create_new_message.innerHTML = 'Сообщение удалено';
+                                        create_new_message.setAttribute('class', 'deleted_message');
+
+
+                                    } else {
+                                        console.log(json);
+                                    }
+                                })
+
+                            });
+                            event.target.appendChild(span);
+                        });
                   
                         messages.appendChild(create_new_message);
 

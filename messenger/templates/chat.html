@@ -7,6 +7,8 @@
 {% static 'css/chat.css' %}
 {% endblock %}
 {% block content %}
+<div id="content">
+
 <p style="display : none" id="user">{{user.account.id}}</p>
 <p style="display : none" id="username">{{user.account.name}}</p>
 <p style="display : none" id="current_username">{{user.username}}</p>
@@ -14,13 +16,14 @@
 <p style="display : none" id="user_photo">{{user.account.profile_picture.url}}</p>
 <p style="display : none" id="token">{{token}}</p>
 
+
 <div id="chats">
         {% for chat in chats %}
         {% if chat.is_private is None %}
 
-            <a class="chat" href="{% url 'chat' chat.id %}">
+            <div class="chat">
                 <img src="{{chat.chat_photo.url}}">
-                <div class="mesandname">
+                <span class="mesandname">
                     <span class = "chat_name">{{chat.name}}</span>
                     {% for mes in chat.message.all %}
                         {% if forloop.last %}
@@ -28,21 +31,24 @@
                             <span class = "preview">{{mes.user}} : {{mes.preview}}</span>
                         {% endif %}
                     {% endfor %}
-                </div>
-            </a>
+                </span>
+            </div>
         {% else %}
-            <a class="pchat" href="{% url 'chat' chat.id %}">
+            <div class="pchat">
                 {% if user.account.id == chat.admin.id %}
-                        <img src="{{chat.is_private.second_user.profile_picture.url}}">
+                <img src="{{chat.is_private.second_user.profile_picture.url}}">
 
-                        <div class="mesandname">
-                        <span class = "chat_name">{{chat.is_private.second_user.name}}</span>
-                            {% else %}
-                        <img src="{{chat.admin.profile_picture.url}}">
+                {% else %}
+                <img src="{{chat.admin.profile_picture.url}}">
 
-                    <div class="mesandname">
-                    <span class = "chat_name">{{chat.admin.name}}</span>
                 {% endif %}
+
+                <span class="mesandname">
+                    {% if user.account.id == chat.admin.id %}
+                        <span class = "chat_name">{{chat.is_private.second_user.name}}</span>
+                    {% else %}
+                        <span class = "chat_name">{{chat.admin.name}}</span>
+                    {% endif %}
                 {% for mes in chat.message.all %}
                     {% if forloop.last %}
                         <br>
@@ -51,8 +57,8 @@
                 {% endfor %}
 
 
-                </div>
-            </a>
+                </span>
+            </div>
         {% endif %}
     {% endfor %}
 </div>
@@ -118,7 +124,7 @@
         <button type="button" id="sendmessage">send</button>
     </div>
 </div>
-
+</div>
 
 <script src="{% static 'js/chat_header.js' %}"></script>
 <script src="{% static 'js/chat.js' %}"></script>
@@ -126,4 +132,5 @@
 <script src="{% static 'js/new_messages.js' %}"></script>
 <script src="{% static 'js/scroll.js' %}"></script>
 <script src="{% static 'js/delete.js' %}"></script>
+<script src="{% static 'js/deleted.js' %}"></script>
 {% endblock %}

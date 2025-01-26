@@ -14,9 +14,3 @@ allmessages.addEventListener('scroll', (event) => {
     }
 
 });
-allmessages.addEventListener('click', (event) => {
-    let del = document.querySelector('.delete');
-    if (event.button === 0 && del !== null) {
-        del.remove();
-    }
-});

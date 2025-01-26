@@ -93,8 +93,7 @@ class ProfileUpdate(LoginRequiredMixin, generic.UpdateView):
         obj = get_object_or_404(Account, username=username)
         return obj
 
-class DeleteProfile(LoginRequiredMixin, generic.DeleteView):
-    model = Account
+class DeleteProfile(LoginRequiredMixin, generic.TemplateView):
     template_name = 'delete_profile.html'
     slug_url_kwarg = 'username'
 
@@ -103,6 +102,7 @@ class DeleteProfile(LoginRequiredMixin, generic.DeleteView):
         context['title'] = 'Удаление аккаунта'
         context['account'] = Account.objects.get(username = self.kwargs['username'])
         return context
+
 
     def dispatch(self, request, *args, **kwargs):
         if not Account.objects.filter(username = self.kwargs['username']).exists():
@@ -113,15 +113,14 @@ class DeleteProfile(LoginRequiredMixin, generic.DeleteView):
         return super(DeleteProfile, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
-        logout(self.request)
+        user_id = self.request.user.id
         requests.post('http://127.0.0.1:8000/auth/token/logout/', headers={
             'Authorization': 'Token ' + Token.objects.get(user_id=self.request.user.id).key})
-        User.objects.get(pk = self.request.user.id).delete()
+        logout(self.request)
+        User.objects.get(pk = user_id).delete()
         return redirect(reverse('registration:login'))
 
-    def get_object(self, queryset=None):
-        obj = Account.objects.get(username = self.kwargs['username'])
-        return obj
+
 
 
 
@@ -261,9 +260,8 @@ class UpdateChat(LoginRequiredMixin, generic.UpdateView):
 
         return super(UpdateChat, self).dispatch(request, *args, **kwargs)
 
-class DeleteChat(LoginRequiredMixin, generic.DeleteView):
+class DeleteChat(LoginRequiredMixin, generic.TemplateView):
     template_name = 'delete_chat.html'
-    model = Chat
     pk_url_kwarg = 'chat_id'
 
     def get_context_data(self, **kwargs):
@@ -272,9 +270,6 @@ class DeleteChat(LoginRequiredMixin, generic.DeleteView):
         context['chat'] = Chat.objects.get(pk = self.kwargs['chat_id'])
         return context
 
-    def get_object(self, queryset=None):
-        obj = Chat.objects.get(pk = self.kwargs['chat_id'])
-        return obj
 
     def dispatch(self, request, *args, **kwargs):
         if not Chat.objects.filter(pk = self.kwargs['chat_id']).exists():
@@ -288,8 +283,6 @@ class DeleteChat(LoginRequiredMixin, generic.DeleteView):
 
         return super(DeleteChat, self).dispatch(request, *args, **kwargs)
 
-    def get_success_url(self):
-        return redirect(reverse('chats'))
 
 @login_required
 def toinvite(request, user_id):

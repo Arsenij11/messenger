@@ -24,5 +24,5 @@ urlpatterns = [
     name='password_reset_confirm'),
     path('password-reset/complete/', PasswordResetCompleteView.as_view(
                                      template_name='password_reset_complete.html'), name='password_reset_complete'),
-    path('confirm_email/<int:user_id>', views.confirm_email, name='confirm_email')
+    path('confirm_email/<slug:username>', views.confirm_email, name='confirm_email')
 ]

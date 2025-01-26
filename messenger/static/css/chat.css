@@ -1,10 +1,19 @@
+#content {
+    height: 600px;
+}
 #chats {
-    width: 300px;
+    width: 290px;
+    overflow-y: scroll;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 600px;
 }
 .chat { 
     height: 100px;
+    margin-bottom: 15px;
     /* margin-top: 10px; */
-    display: block; 
 }
 .chat img {
     width: 80px;
@@ -15,8 +24,8 @@
 }
 .pchat { 
     height: 100px;
+    margin-bottom: 15px;
     /* margin-top: 10px; */
-    display: block; 
 }
 .pchat img {
     width: 80px;
@@ -116,7 +125,7 @@
     height: 30px;
     border-radius: 15px; 
     text-align: center;
-    display: none;
+    display: table-cell;
     z-index: 100;
 }
 

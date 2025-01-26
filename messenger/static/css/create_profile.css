@@ -7,6 +7,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    /*border: 1px solid white;*/
 }
 #formcreate form {
     margin-top: 10px;
@@ -25,9 +26,10 @@
 }
 button {
     margin-top: 10px;
-    width: 70px;
     border-radius: 35px;
     display: block;
+    min-width: 60px;
+    width: auto;
 }
 /* .name {
     margin-left: 10px;
