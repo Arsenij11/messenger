@@ -22,6 +22,7 @@
         {% if chat.is_private is None %}
 
             <div class="chat">
+                <p class="chat_id" style="display:none">{{chat.id}}</p>
                 <img src="{{chat.chat_photo.url}}">
                 <span class="mesandname">
                     <span class = "chat_name">{{chat.name}}</span>
@@ -35,6 +36,7 @@
             </div>
         {% else %}
             <div class="pchat">
+                <p class="chat_id" style="display:none">{{chat.id}}</p>
                 {% if user.account.id == chat.admin.id %}
                 <img src="{{chat.is_private.second_user.profile_picture.url}}">
 
@@ -126,6 +128,7 @@
 </div>
 </div>
 
+<script src="{% static 'js/list_of_chats.js' %}"></script>
 <script src="{% static 'js/chat_header.js' %}"></script>
 <script src="{% static 'js/chat.js' %}"></script>
 <script src="{% static 'js/redirect.js' %}"></script>

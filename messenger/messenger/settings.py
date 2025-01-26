@@ -164,12 +164,12 @@ REST_FRAMEWORK = {
     ],
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'your email'
-EMAIL_HOST_PASSWORD = 'your password'
+EMAIL_HOST_USER = 'boardbul@yandex.ru'
+EMAIL_HOST_PASSWORD = 'ggpedsbpegnluoxq'
 EMAIL_USE_SSL = True
 
 

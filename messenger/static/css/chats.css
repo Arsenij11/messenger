@@ -1,30 +1,51 @@
+#content {
+    height: 100vh;
+    overflow: hidden;
+}
 #chats {
     width: 290px;
     overflow-y: auto;
     padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+    /*justify-content: center;*/
+    align-items: flex-start;
+    height: calc(100vh - 20px);
 }
-.chat { 
+.chat {
     height: 100px;
-    margin-top: 10px;
-    display: block; 
+    margin-bottom: 15px;
+    display: flex; /* Чтобы аватарка и текст шли вместе */
+    align-items: flex-start;
+    /* margin-top: 10px; */
 }
 .chat img {
     width: 80px;
     height: 80px;
     border-radius: 40px;
     float: left;
-   
+    position: relative;
+    margin-right: 10px;
+}
+.pchat {
+    height: 100px;
+    margin-bottom: 15px;
+    display: flex; /* Чтобы аватарка и текст шли вместе */
+    align-items: flex-start;
+    /* margin-top: 10px; */
 }
 .pchat img {
     width: 80px;
     height: 80px;
     border-radius: 40px;
     float: left;
-
+    position: relative;
+    margin-right: 10px;
 }
 .mesandname {
-    position: absolute;
-    left: 90px;
+    position: relative;
+    /*left: 90px;*/
+    /*flex: 1;*/
 }
 
 .chat_name {

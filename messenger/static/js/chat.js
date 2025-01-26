@@ -84,7 +84,8 @@ function newmessage (data) {
                             event.target.style = 'cursor : none';
                         })
                         profile_picture.addEventListener('click', (event) => {
-                           window.location.href = `http://127.0.0.1:8000/main_page/${username}`;
+                            let username = document.getElementById('current_username').innerHTML;
+                            window.location.href = `http://127.0.0.1:8000/main_page/${username}`;
                         });
                         create_new_message.appendChild(profile_picture);
 
