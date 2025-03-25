@@ -1,0 +1,54 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/new_chat.css' %}
+{% endblock %}
+{% block content %}
+<p style="display : none;" id="token">{{user.auth_token.key}}</p>
+<p style="display : none;" id="chat_id">{{chat.id}}</p>
+<div id="delete_chat">
+     <div id="form">
+         <h1 style="text-align : center">Вы действительно хотите удалить чат <u>{{chat.name}}</u>?</h1>
+         <button type="submit">Удалить</button>
+    </div>
+</div>
+<script>
+    const delete_chat = document.getElementById('delete_chat');
+    const button = document.querySelector('button');
+
+    delete_chat.style.width = window.innerWidth + 'px';
+    delete_chat.style.height = String(parseInt(window.innerHeight) - 20) + 'px';
+
+    button.addEventListener('mouseover', (event)=>{
+       event.target.style.cursor = 'pointer';
+    });
+    button.addEventListener('mouseout', (event)=>{
+        event.target.style.cursor = 'none';
+    });
+    button.addEventListener('click', (event)=>{
+        const token = document.getElementById('token').innerHTML;
+        const chat_id = document.getElementById('chat_id').innerHTML;
+        const options = {
+            method : 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization' : 'Token ' + token,
+            },
+        }
+        fetch(`http://127.0.0.1:8000/api/chat/delete_chat/${chat_id}`, options).
+        catch((error) => console.log(error)).
+        then((response)=> {return response.json()}).
+        then((json) => {
+            if (typeof json['detail'] === 'undefined') {
+                window.location.href = `http://127.0.0.1:8000/allchats`;
+            }
+            else {
+                console.log(json);
+            }
+        })
+    });
+</script>
+{% endblock %}

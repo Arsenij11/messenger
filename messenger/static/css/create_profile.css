@@ -1,0 +1,36 @@
+#formcreate {
+    width: auto;
+    height: 400px;
+    color: #6d7883;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    /*border: 1px solid white;*/
+}
+#formcreate form {
+    margin-top: 10px;
+}
+#formcreate form p label {
+    display: block;
+}
+#formcreate form p input{
+    background-color: #343f4b;
+    margin: 5px 0 25px 0;
+    display: inline-block;
+}
+#about {
+    height: 200px;
+    width: 300px;
+}
+button {
+    margin-top: 10px;
+    border-radius: 35px;
+    display: block;
+    min-width: 60px;
+    width: auto;
+}
+/* .name {
+    margin-left: 10px;
+} */

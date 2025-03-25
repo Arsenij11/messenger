@@ -1,0 +1,24 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/authorization.css' %}
+{% endblock %}
+{% block content %}
+<div id="content">
+  <div id="form">
+        <h1>Регистрация</h1>
+        <form method="post" action="">
+          {% csrf_token %}
+          {{form.as_p}}
+          <p><button type="submit" style="width: 150px">Зарегистрироваться</button></p>
+        </form>
+       <p>Уже зарегистрированы?<br><a href="{% url 'registration:login' %}">Войти</a></p>
+  </div>
+</div>
+<script src="{% static 'js/forminauth.js' %}"></script>
+<script src="{% static 'js/buttons.js' %}"></script>
+<script src="{% static 'js/refs.js' %}"></script>
+{% endblock %}

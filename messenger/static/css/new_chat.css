@@ -1,0 +1,40 @@
+#create_chat {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#delete_chat {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#form {
+    min-width: 450px;
+    min-height: 410px;
+    height: auto;
+    width: auto;
+    border: 1px solid white;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+#form h1 {
+    margin-bottom: 10px;
+}
+#form p {
+    margin-top: 10px;
+}
+#form p a {
+    display: block;
+    font-size: 10px;
+}
+button {
+    margin-top: 10px;
+    min-width: 60px;
+    width: auto;
+    height: 40px;
+    border-radius: 50px;
+}

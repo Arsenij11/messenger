@@ -1,0 +1,139 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/chat.css' %}
+{% endblock %}
+{% block content %}
+<div id="content">
+
+<p style="display : none" id="user">{{user.account.id}}</p>
+<p style="display : none" id="username">{{user.account.name}}</p>
+<p style="display : none" id="current_username">{{user.username}}</p>
+<p style="display : none" id="chat">{{ourchat.id}}</p>
+<p style="display : none" id="user_photo">{{user.account.profile_picture.url}}</p>
+<p style="display : none" id="token">{{token}}</p>
+
+
+<div id="chats">
+        {% for chat in chats %}
+        {% if chat.is_private is None %}
+
+            <div class="chat">
+                <p class="chat_id" style="display:none">{{chat.id}}</p>
+                <img src="{{chat.chat_photo.url}}">
+                <span class="mesandname">
+                    <span class = "chat_name">{{chat.name}}</span>
+                    {% for mes in chat.message.all %}
+                        {% if forloop.last %}
+                            <br>
+                            <span class = "preview">{{mes.user}} : {{mes.preview}}</span>
+                        {% endif %}
+                    {% endfor %}
+                </span>
+            </div>
+        {% else %}
+            <div class="pchat">
+                <p class="chat_id" style="display:none">{{chat.id}}</p>
+                {% if user.account.id == chat.admin.id %}
+                <img src="{{chat.is_private.second_user.profile_picture.url}}">
+
+                {% else %}
+                <img src="{{chat.admin.profile_picture.url}}">
+
+                {% endif %}
+
+                <span class="mesandname">
+                    {% if user.account.id == chat.admin.id %}
+                        <span class = "chat_name">{{chat.is_private.second_user.name}}</span>
+                    {% else %}
+                        <span class = "chat_name">{{chat.admin.name}}</span>
+                    {% endif %}
+                {% for mes in chat.message.all %}
+                    {% if forloop.last %}
+                        <br>
+                        <span class = "preview">{{mes.user.name}} : {{mes.preview}}</span>
+                    {% endif %}
+                {% endfor %}
+
+
+                </span>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<div id="chat_header">
+        <span id="chat_photo">
+            {% if ourchat.is_private is None %}
+                <img src="{{ourchat.chat_photo.url}}">
+            {% else %}
+                {% if user.account.id == ourchat.admin.id %}
+                    <img src="{{ourchat.is_private.second_user.profile_picture.url}}">
+                {% else %}
+                    <img src="{{ourchat.admin.profile_picture.url}}">
+                {% endif %}
+
+            {% endif %}
+        </span>
+    {% if ourchat.is_private is None %}
+        <span id="chat_name">{{ourchat.name}}</span><br>
+    {% else %}
+        {% if user.account.id == ourchat.admin.id %}
+            <span id="chat_name">{{ourchat.is_private.second_user.name}}</span><br>
+        {% else %}
+            <span id="chat_name">{{ourchat.admin.name}}</span><br>
+        {% endif %}
+    {% endif %}
+    {% if ourchat.is_private is None %}
+
+        <span id="participants">Количество участников: {{ourchat.participants.count}}</span>
+        <br>
+        <a href="{% url 'moreinfo' ourchat.id %}" id="more">Подробнее...</a>
+    {% else %}
+        {% if user.account.id == ourchat.admin.id %}
+            <a href="{% url 'main page' ourchat.is_private.second_user.username %}" id="more">Посмотреть профиль...</a>
+        {% else %}
+            <a href="{% url 'main page' ourchat.admin.username %}" id="more">Посмотреть профиль...</a>
+        {% endif %}
+    {% endif %}
+</div>
+
+
+<div id="messages">
+    {% if ourchat.message is not None %}
+    {% for mes in ourchat.message.all %}
+    <div class='message'>
+        <img class='profile_picture' src='{{mes.user.profile_picture.url}}'>
+        <span class='messagefromuser'>
+            <span class='name'>{{mes.user}}</span>
+            <span style='display : none' class='username'>{{mes.user.username}}</span>
+                <span style='display : none' class='mes_id'>{{mes.id}}</span>
+            <span class='mes'>{{mes.message}}</span>
+            <span class='time'>{{mes.send_time|date:'H:i'}}</span>
+
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+
+<div id="tosendmessage">
+    <div id="tosendmessagerow">
+        <input type="text" id="putmessage" placeholder="Введите сообщение...">
+        <button type="button" id="sendmessage">send</button>
+    </div>
+</div>
+</div>
+
+<script src="{% static 'js/list_of_chats.js' %}"></script>
+<script src="{% static 'js/chat_header.js' %}"></script>
+<script src="{% static 'js/chat.js' %}"></script>
+<script src="{% static 'js/redirect.js' %}"></script>
+<script src="{% static 'js/new_messages.js' %}"></script>
+<script src="{% static 'js/scroll.js' %}"></script>
+<script src="{% static 'js/delete.js' %}"></script>
+<script src="{% static 'js/deleted.js' %}"></script>
+{% endblock %}

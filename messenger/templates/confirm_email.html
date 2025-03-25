@@ -1,0 +1,24 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+Пароль был успешно изменён
+{% endblock %}
+{% block css %}
+{% static 'css/authorization.css' %}
+{% endblock %}
+{% block content %}
+<div id="content">
+    <div id="form">
+    <h1>Подтверждение регистрации</h1>
+    <p>На e-mail, который Вы указали при регистрации, был отправлен код подтверждения.<br>Введите его ниже</p>
+
+    <form method="POST" action="">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit">Отправить</button>
+    </form>
+    </div>
+</div>
+<script src="{% static 'js/forminauth.js' %}"></script>
+<script src="{% static 'js/buttons.js'%}"></script>
+{% endblock %}

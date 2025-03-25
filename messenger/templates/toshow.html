@@ -1,0 +1,25 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/show.css' %}
+{% endblock %}
+{% block content %}
+<h1 style="text-align: center; margin-top: 5px">Список участников беседы <a href="{{chat.get_absolute_url}}">{{chat.name}}</a></h1>
+<div id="participants">
+    {% for p in participants %}
+        <div class="peoples">
+            <p class="p_photo"><img src = "{{p.profile_picture.url}}"></p>
+            <p class="p_name">{{p.name}}</p>
+            <p class="p_url"><a href="{{p.get_absolute_url}}">Посмотреть профиль...</a></p>
+        </div>
+   
+    {% endfor %}
+</div>
+<script>
+    const participants = document.getElementById('participants');
+    participants.style.margin = `${window.innerHeight/3.5}px 0 0 ${window.innerWidth/2.5}px`;
+</script>
+{% endblock %}

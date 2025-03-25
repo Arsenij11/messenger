@@ -1,0 +1,26 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/invite.css' %}
+{% endblock %}
+{% block content %}
+<h1 style="text-align: center; margin-top: 5px">{{title}}</h1>
+<div id="chats">
+    {% for chat in chats %}
+        <div class="chat">
+            <p class="chat_id" style="display:none">{{chat.id}}</p>
+            <p class="user_id" style="display:none">{{user_id}}</p>
+            <p class="key" style="display:none">{{token}}</p>
+            <p class="chat_photo"><img src = "{{chat.chat_photo.url}}"></p>
+            <p class="chat_name">{{chat.name}}</p>
+            <p class="chat_count">Количество участников: {{chat.participants.count}}</p>
+            <p class="chat_to_add">Добавить в беседу...</p>
+        </div>
+   
+    {% endfor %}
+</div>
+<script src="{% static 'js/invite.js' %}"></script>
+{% endblock %}

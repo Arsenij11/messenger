@@ -1,0 +1,72 @@
+#content {
+    height: 100vh;
+    overflow: hidden;
+}
+#chats {
+    width: 290px;
+    overflow-y: auto;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+    /*justify-content: center;*/
+    align-items: flex-start;
+    height: calc(100vh - 20px);
+}
+.chat {
+    height: 100px;
+    margin-bottom: 15px;
+    display: flex; /* Чтобы аватарка и текст шли вместе */
+    align-items: flex-start;
+    /* margin-top: 10px; */
+}
+.chat img {
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
+    float: left;
+    position: relative;
+    margin-right: 10px;
+}
+.pchat {
+    height: 100px;
+    margin-bottom: 15px;
+    display: flex; /* Чтобы аватарка и текст шли вместе */
+    align-items: flex-start;
+    /* margin-top: 10px; */
+}
+.pchat img {
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
+    float: left;
+    position: relative;
+    margin-right: 10px;
+}
+.mesandname {
+    position: relative;
+    /*left: 90px;*/
+    /*flex: 1;*/
+}
+
+.chat_name {
+    font-size: 16px;
+
+}
+.preview {
+    color: #afafaf;
+}
+#messages {
+    background-color: #0e1621;
+    display: inline-block;
+    text-align: center;
+    position: absolute;
+    left: 300px;
+    top: 30px;
+    bottom: 0;
+}
+
+#nonselectedchat {
+    background-color: #1e2c3a;
+    position: fixed;
+    
+}

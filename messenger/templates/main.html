@@ -1,0 +1,27 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/main_style.css' %}
+{% endblock %}
+{% block content %}
+<div id="info">
+    <div id="photo"><img src="{{account.profile_picture.url}}" id="profilepicture"></div>
+    <p id="name">{{account.name}}</p>
+    <p id="about">О себе</p>
+    <p id="description">{{account.about}}</p>
+    {% if user.id == account.user.id %}<p id='editprofile' class="ref"><a href="{% url 'update_profile' account.username %}">Редактировать...</a></p>{% endif %}
+
+    {% if user.id == account.user.id %}
+        <p id="tochats" class="ref"><a href="{% url 'chats' %}">Перейти к чатам...</a></p>
+        <p class="ref"><a href="{% url 'new_chat' %}">Создать беседу</a></p>
+    {% else %}
+        <p class="ref"><a href="{% url 'new private chat' account.username %}">Написать сообщение...</a></p>
+        <p class="ref"><a href="{% url 'invite' account.id %}">Пригласить в чат</a></p>
+    {% endif %}
+    {% if user.id == account.user.id %}<p id='deleteprofile' class="ref"><a href="{% url 'delete_profile' account.username %}">Удалить профиль...</a></p>{% endif %}
+</div>
+
+{% endblock %}

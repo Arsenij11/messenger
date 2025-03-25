@@ -1,0 +1,64 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/chats.css' %}
+{% endblock %}
+{% block content %}
+<div id="content">
+    <div id="user" style="display : none">{{user.id}}</div>
+    <div id="chats">
+        {% for chat in chats %}
+        {% if chat.is_private is None %}
+
+        <div class="chat">
+            <img src="{{chat.chat_photo.url}}">
+            <span class="mesandname">
+                    <span class = "chat_name">{{chat.name}}</span>
+                    <span class="chat_id" style="display:none">{{chat.id}}</span>
+                    {% for mes in chat.message.all %}
+                        {% if forloop.last %}
+                            <br>
+                            <span class = "preview">{{mes.user}} : {{mes.preview}}</span>
+                        {% endif %}
+                    {% endfor %}
+                </span>
+        </div>
+        {% else %}
+        <div class="pchat">
+            <p class="chat_id" style="display:none">{{chat.id}}</p>
+            {% if user.account.id == chat.admin.id %}
+            <img src="{{chat.is_private.second_user.profile_picture.url}}">
+
+            {% else %}
+            <img src="{{chat.admin.profile_picture.url}}">
+
+            {% endif %}
+
+            <span class="mesandname">
+                    {% if user.account.id == chat.admin.id %}
+                        <span class = "chat_name">{{chat.is_private.second_user.name}}</span>
+                    {% else %}
+                        <span class = "chat_name">{{chat.admin.name}}</span>
+                    {% endif %}
+                {% for mes in chat.message.all %}
+                    {% if forloop.last %}
+                        <br>
+                        <span class = "preview">{{mes.user.name}} : {{mes.preview}}</span>
+                    {% endif %}
+                {% endfor %}
+
+
+                </span>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+<p id="messages"><span id="nonselectedchat">Здесь будут отображаться ваши диалоги</span></p>
+</div>
+<script src="{% static 'js/chats.js' %}"></script>
+
+{% endblock %}

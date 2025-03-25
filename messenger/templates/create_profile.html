@@ -1,0 +1,18 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block css %}
+{% static 'css/create_profile.css' %}
+{% endblock %}
+{% block content %}
+<div id="formcreate">
+    <form action="" enctype="multipart/form-data" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit">Отправить</button>
+    </form>
+</div>
+<script src="{% static 'js/buttons.js' %}"></script>
+{% endblock %}
